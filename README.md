@@ -50,14 +50,14 @@ Note: If both `REQP_AUTO_ADD_HTTPS` and `REQP_AUTO_ADD_HTTP` are set to `true`, 
 
 ### Examples
 
-| Input             | Setting                                               | Result              |
-|-------------------|-------------------------------------------------------|---------------------|
-| example.com       | REQP_AUTO_ADD_HTTPS = true                            | https://example.com |
-| example.com       | REQP_AUTO_ADD_HTTP = true                             | http://example.com  |
-| example.com       | REQP_AUTO_ADD_HTTPS = true, REQP_AUTO_ADD_HTTP = true | https://example.com |
-| http://domain.com | REQP_UPGRADE_TO_HTTPS = true                          | https://domain.com  |
-| http://domain.com | REQP_REQUIRE_HTTPS = true                             | Error               |
-| example.com       | no auto-fix option                                    | Error               |
+| Input              | Setting                                               | Result              |
+|--------------------|-------------------------------------------------------|---------------------|
+| example.com        | REQP_AUTO_ADD_HTTPS = true                            | https://example.com |
+| example.com        | REQP_AUTO_ADD_HTTP = true                             | http://example.com  |
+| example.com        | REQP_AUTO_ADD_HTTPS = true, REQP_AUTO_ADD_HTTP = true | https://example.com |
+| http://example.com | REQP_UPGRADE_TO_HTTPS = true                          | https://example.com |
+| http://example.com | REQP_REQUIRE_HTTPS = true                             | Error               |
+| example.com        | no auto-fix option                                    | Error               |
 
 ### License
 
