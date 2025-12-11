@@ -1,0 +1,9 @@
+{
+    "name": "julabo/yourls_require_protocol",
+    "description": "Advanced protocol validation for original URLs in YOURLS.",
+    "type": "yourls-plugin",
+    "license":"MIT",
+    "require": {
+      "php": ">=7.4.0"
+    }
+}
