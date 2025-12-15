@@ -63,6 +63,12 @@ function reqp_validate_original_url($false, $url, $keyword = '', $title = '') {
  * Hook into YOURLS sanitization to actually normalize the URL used downstream
  */
 function reqp_filter_sanitize_url($url, $unsafe_url) {
+    // Do not normalize relative URLs
+    $candidate = trim((string)$unsafe_url);
+    if ($candidate !== '' && preg_match('/^[a-z0-9][a-z0-9_-]{0,198}$/i', $candidate)) {
+        return $url;
+    }
+
     return reqp_normalize_url($url);
 }
 
