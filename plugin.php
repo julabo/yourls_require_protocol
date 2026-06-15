@@ -3,7 +3,7 @@
 Plugin Name: Require Protocol
 Plugin URI: https://github.com/julabo/yourls_require_protocol
 Description: Advanced validation for original URLs in YOURLS. Enforces a protocol, optionally allows only HTTPS, and can automatically fix protocols.
-Version: 1.0.0
+Version: 1.0.2
 Author: Jan Leehr
 Author URI: https://julabo.com
 */
@@ -14,17 +14,19 @@ Author URI: https://julabo.com
  */
 
 // Allow only HTTPS? (true/false)
-define('REQP_REQUIRE_HTTPS', false);
+if (!defined('REQP_REQUIRE_HTTPS'))   define('REQP_REQUIRE_HTTPS', false);
 
 // Automatically upgrade http:// → https:// ? (true/false)
-define('REQP_UPGRADE_TO_HTTPS', false);
+if (!defined('REQP_UPGRADE_TO_HTTPS')) define('REQP_UPGRADE_TO_HTTPS', false);
 
 // If no protocol is present: automatically prepend http:// ? (true/false)
-define('REQP_AUTO_ADD_HTTP', false);
+if (!defined('REQP_AUTO_ADD_HTTP'))   define('REQP_AUTO_ADD_HTTP', false);
 
 // If no protocol is present: automatically prepend https:// ? (true/false)
 // When both REQP_AUTO_ADD_HTTPS and REQP_AUTO_ADD_HTTP are true, https:// takes precedence
-define('REQP_AUTO_ADD_HTTPS', false);
+if (!defined('REQP_AUTO_ADD_HTTPS'))  define('REQP_AUTO_ADD_HTTPS', false);
+
+
 
 
 /**
