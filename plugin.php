@@ -3,7 +3,7 @@
 Plugin Name: Require Protocol
 Plugin URI: https://github.com/julabo/yourls_require_protocol
 Description: Advanced validation for original URLs in YOURLS. Enforces a protocol, optionally allows only HTTPS, and can automatically fix protocols.
-Version: 1.1.1
+Version: 1.1.2
 Author: Jan Leehr
 Author URI: https://julabo.com
 */
@@ -35,17 +35,38 @@ if (!defined('REQP_AUTO_ADD_HTTPS'))  define('REQP_AUTO_ADD_HTTPS', false);
  */
 
 yourls_add_filter('shunt_add_new_link', 'reqp_validate_original_url');
+// Same validation/normalization when editing an existing link
+yourls_add_filter('shunt_edit_link', 'reqp_validate_edited_link', 10, 6);
 // Normalize URL during sanitization (so the rest of YOURLS uses the final URL)
 yourls_add_filter('sanitize_url', 'reqp_filter_sanitize_url', 10, 2);
 
+// Validation when adding a new link (shunt_add_new_link).
 function reqp_validate_original_url($false, $url, $keyword = '', $title = '') {
+    reqp_begin_link_write();
+    $error = reqp_check_url($url);
+    return $error !== null ? $error : $false;
+}
 
-    // Mark that we are inside yourls_add_new_link(). This scopes URL
-    // normalization (reqp_filter_sanitize_url) to the add operation only, so it
-    // never rewrites routing requests, which also pass through yourls_sanitize_url()
-    // and would otherwise get a protocol prepended and be misrouted as bookmarklets.
+// Validation when editing an existing link (shunt_edit_link).
+// shunt_edit_link passes ($sentinel, $keyword, $url, $keyword, $newkeyword, $title),
+// so the long URL is the 3rd argument.
+function reqp_validate_edited_link($false, $keyword = '', $url = '', $same_keyword = '', $newkeyword = '', $title = '') {
+    reqp_begin_link_write();
+    $error = reqp_check_url($url);
+    return $error !== null ? $error : $false;
+}
+
+// Mark that we are inside a link add/edit operation. This scopes URL
+// normalization (reqp_filter_sanitize_url) to that operation only, so it never
+// rewrites routing requests, which also pass through yourls_sanitize_url() and
+// would otherwise get a protocol prepended and be misrouted as bookmarklets.
+function reqp_begin_link_write() {
     $GLOBALS['reqp_adding_link'] = true;
+}
 
+// Validate a long URL against the plugin settings. Returns an error array to
+// short-circuit the operation, or null when the URL is acceptable.
+function reqp_check_url($url) {
     $url = trim($url);
 
     // If no protocol and we don't auto-add, error early for clarity
@@ -64,7 +85,7 @@ function reqp_validate_original_url($false, $url, $keyword = '', $title = '') {
         return reqp_error("Only URLs with https:// are allowed.");
     }
 
-    return $false;
+    return null;
 }
 
 /**
@@ -77,6 +98,12 @@ function reqp_filter_sanitize_url($url, $unsafe_url) {
     if (empty($GLOBALS['reqp_adding_link'])) {
         return $url;
     }
+
+    // One-shot: only normalize the long URL of the link being added (the first
+    // sanitize_url call after our shunt). Clear the flag immediately so later
+    // sanitize_url calls in the same add request - e.g. on the keyword while
+    // building the short URL - don't get a protocol prepended.
+    $GLOBALS['reqp_adding_link'] = false;
 
     return reqp_normalize_url($url);
 }
