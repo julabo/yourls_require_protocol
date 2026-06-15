@@ -3,7 +3,7 @@
 Plugin Name: Require Protocol
 Plugin URI: https://github.com/julabo/yourls_require_protocol
 Description: Advanced validation for original URLs in YOURLS. Enforces a protocol, optionally allows only HTTPS, and can automatically fix protocols.
-Version: 1.1.0
+Version: 1.1.1
 Author: Jan Leehr
 Author URI: https://julabo.com
 */
@@ -40,6 +40,12 @@ yourls_add_filter('sanitize_url', 'reqp_filter_sanitize_url', 10, 2);
 
 function reqp_validate_original_url($false, $url, $keyword = '', $title = '') {
 
+    // Mark that we are inside yourls_add_new_link(). This scopes URL
+    // normalization (reqp_filter_sanitize_url) to the add operation only, so it
+    // never rewrites routing requests, which also pass through yourls_sanitize_url()
+    // and would otherwise get a protocol prepended and be misrouted as bookmarklets.
+    $GLOBALS['reqp_adding_link'] = true;
+
     $url = trim($url);
 
     // If no protocol and we don't auto-add, error early for clarity
@@ -65,9 +71,10 @@ function reqp_validate_original_url($false, $url, $keyword = '', $title = '') {
  * Hook into YOURLS sanitization to actually normalize the URL used downstream
  */
 function reqp_filter_sanitize_url($url, $unsafe_url) {
-    // Do not normalize relative URLs
-    $candidate = trim((string)$unsafe_url);
-    if ($candidate !== '' && preg_match('/^[a-z0-9][a-z0-9_-]{0,198}$/i', $candidate)) {
+    // Only normalize while actually adding a new link. yourls_sanitize_url() is
+    // also called during request routing (yourls_get_request), short URL
+    // resolution and stat pages; prepending a protocol there would break them.
+    if (empty($GLOBALS['reqp_adding_link'])) {
         return $url;
     }
 
