@@ -10,7 +10,7 @@ Require Protocol is a YOURLS plugin that ensures original URLs have a valid prot
 - Optional: Allow only HTTPS
 - Optional: Automatically upgrade `http://` → `https://`
 - Consistent error messages in the YOURLS admin
-- Fully compatible with YOURLS 1.9+
+- Requires YOURLS 1.10.4+
 
 ---
 

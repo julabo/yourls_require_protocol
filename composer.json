@@ -4,6 +4,7 @@
     "type": "yourls-plugin",
     "license":"MIT",
     "require": {
-      "php": ">=7.4.0"
+      "php": ">=8.0",
+      "yourls/yourls": ">=1.10.4"
     }
 }

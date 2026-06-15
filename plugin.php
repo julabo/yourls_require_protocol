@@ -3,7 +3,7 @@
 Plugin Name: Require Protocol
 Plugin URI: https://github.com/julabo/yourls_require_protocol
 Description: Advanced validation for original URLs in YOURLS. Enforces a protocol, optionally allows only HTTPS, and can automatically fix protocols.
-Version: 1.0.2
+Version: 1.1.0
 Author: Jan Leehr
 Author URI: https://julabo.com
 */
@@ -58,7 +58,7 @@ function reqp_validate_original_url($false, $url, $keyword = '', $title = '') {
         return reqp_error("Only URLs with https:// are allowed.");
     }
 
-    return false; // allow YOURLS to continue
+    return $false;
 }
 
 /**
